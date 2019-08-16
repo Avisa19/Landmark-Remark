@@ -13,9 +13,11 @@ import MapKit
 class MainViewController: UIViewController {
     
     var locationManager = CLLocationManager()
+    let regionInMeters: Double = 30000
     
     let mapView: MKMapView = {
         let map = MKMapView()
+        map.showsUserLocation = true
         return map
     }()
     
@@ -27,7 +29,17 @@ class MainViewController: UIViewController {
         navigationItem.title = "Landmark Remark"
         setupViews()
        checkLocationServices()
-       
+        
+    }
+    
+    fileprivate func centerViewOnUserLocation() {
+        
+        if let location = locationManager.location?.coordinate {
+            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+            
+            mapView.setRegion(region, animated: true)
+        }
+        
     }
     
     fileprivate func setupLocationManager() {
@@ -54,6 +66,8 @@ class MainViewController: UIViewController {
             break
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
+            centerViewOnUserLocation()
+            locationManager.startUpdatingLocation()
             break
         case .restricted:
             break
@@ -81,11 +95,17 @@ extension MainViewController: CLLocationManagerDelegate {
     
     private func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
-       
+        guard let location = locations.last else { return }
+        
+        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        
+       let region = MKCoordinateRegion.init(center: center, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+      
+        mapView.setRegion(region, animated: true)
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        
+        checkLocationForAuthorization()
     }
 }
 
