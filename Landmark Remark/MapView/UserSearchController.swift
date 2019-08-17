@@ -12,12 +12,13 @@ import MapKit
 import CoreLocation
 
 
-class UserSearchController: UIViewController, MKMapViewDelegate {
+class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
     
-    let searchBar: UISearchBar = {
+    lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
-        sb.placeholder = "Enter search text"
+        sb.placeholder = "Enter username"
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor.grayiesh
+        sb.delegate = self
         return sb
     }()
     
@@ -29,14 +30,29 @@ class UserSearchController: UIViewController, MKMapViewDelegate {
     
     var users = [User]()
     var places = [Place]()
+    var filteredUsers = [User]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
         
-        fetchUsers()
+//        fetchUsers()
         
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchText.isEmpty {
+            filteredUsers = users
+        } else {
+            filteredUsers = self.users.filter { (user) -> Bool in
+                return user.username.contains(searchText.lowercased())
+            }
+        }
+        
+        fetchUsers()
     }
     
     fileprivate func fetchUsers() {
@@ -47,11 +63,19 @@ class UserSearchController: UIViewController, MKMapViewDelegate {
             
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             dictionaries.forEach({ (key, value) in
+                
+//                if key == Auth.auth().currentUser?.uid {
+//                    print("Found myself and omit")
+////                    return
+//                }
+                
                 guard let userDictionary = value as? [String: Any] else { return }
                 let user = User(uid: key, dictionary: userDictionary)
                 self.users.append(user)
+               
+                self.filteredUsers = self.users
                 self.fetchPlacesWithUser(user: user)
-                print(user.username)
+               
             })
             
         }) { (err) in
@@ -71,10 +95,6 @@ class UserSearchController: UIViewController, MKMapViewDelegate {
                 
                 var place = Place(user: user, dictionary: dictionary)
                 place.id = key
-                
-                print(key)
-                
-                print(place.text)
                 
                 self.places.append(place)
                 
