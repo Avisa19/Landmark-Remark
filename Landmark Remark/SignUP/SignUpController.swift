@@ -170,7 +170,7 @@ class SignUpController: UIViewController {
         stackView.spacing = 10
         stackView.axis = .vertical
         
-        stackView.anchor(top: nil, paddingTop: 0, left: nil, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: nil, paddingRight: 0, width: view.frame.width - 40, height: 200, centerX: view.centerXAnchor, centerY: view.centerYAnchor)
+        stackView.anchor(top: view.topAnchor, paddingTop: 100, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 200, centerX: nil, centerY: nil)
         
     }
 }

@@ -138,7 +138,7 @@ class LoginController: UIViewController {
         signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -20, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
         
         view.addSubview(logoContainerView)
-        logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 150, centerX: nil, centerY: nil)
+        logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 125, centerX: nil, centerY: nil)
         
         setupInputFields()
     }
