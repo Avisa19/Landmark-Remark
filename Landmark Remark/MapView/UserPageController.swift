@@ -216,7 +216,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     fileprivate func setupNavigationItems() {
         
-         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogout))
+         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout"), style: .plain, target: self, action: #selector(handleLogout))
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.white
     }
  
     

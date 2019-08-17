@@ -106,10 +106,12 @@ class LoginController: UIViewController {
             print("Successfully Logged in", userId)
             
             //It help me to reset all of the controllers again.
-            guard let mainViewController = UIApplication.shared.keyWindow?.rootViewController as? UserPageController else { return }
-            
-            mainViewController.setupViews()
-            self.dismiss(animated: true, completion: nil)
+          
+            self.dismiss(animated: true, completion: {
+                guard let mainViewController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+                
+                mainViewController.setupViewsController()
+            })
         }
     }
     

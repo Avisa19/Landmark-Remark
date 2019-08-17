@@ -20,6 +20,10 @@ extension UIColor {
     
     static let grayiesh = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     
+    static let whitesh = UIColor(red: 70/255, green: 146/255, blue: 250/255, alpha: 1)
+    
+    static let customBlue = UIColor(red: 51/255, green: 90/255, blue: 149/255, alpha: 1)
+    
     //    static func mainBlue() -> UIColor {
     //        return UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
     //    }

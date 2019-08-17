@@ -9,8 +9,13 @@
 import UIKit
 import Firebase
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
+    }
 
     var window: UIWindow?
 
@@ -24,6 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         window?.rootViewController = MainTabBarController()
+        UINavigationBar.appearance().barTintColor = .customBlue
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        UITabBar.appearance().tintColor = .whitesh
         
         return true
     }
