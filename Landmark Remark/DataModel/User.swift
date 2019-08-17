@@ -11,6 +11,7 @@ import Foundation
 struct User {
     
     let uid: String
+    
     let username: String
     
     
@@ -20,6 +21,5 @@ struct User {
         
         self.username = dictionary["username"] as? String ?? ""
         self.uid = uid
-        
     }
 }

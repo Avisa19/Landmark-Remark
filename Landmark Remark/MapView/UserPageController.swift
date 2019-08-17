@@ -11,8 +11,10 @@ import CoreLocation
 import MapKit
 import Firebase
 
+// At the end start reFactoring
 
 class UserPageController: UIViewController, MKMapViewDelegate {
+    
     
     var uid: String?
     
@@ -44,17 +46,17 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         setupNavigationItems()
         
-        setupLongPressProgressForSavingLocation()
+        setupLongPressProgressLocation()
         
 //        fetchPlaces()
         
         fetchUser()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        fetchPlaces()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        fetchPlaces()
+//    }
     
     fileprivate func fetchUser() {
         
@@ -62,6 +64,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         Database.fetchUserWithUID(uid: uid) { (user) in
             print(user.uid, user.username)
             self.user = user
+            self.navigationItem.title = user.username
             self.fetchPlaces()
         }
         
@@ -87,6 +90,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                 let place = Place(user: user, dictionary: dictionary)
                print(place.text)
                 self.places.append(place)
+               
                 if self.places.count > self.activePlace {
                     let latitude = place.lat
                     let longitude = place.lon
@@ -102,19 +106,20 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                     let annotation = MKPointAnnotation()
                     
                     annotation.coordinate = coordinate
-                    annotation.title = title
+                    annotation.title = "\(title)" + "\n\(user.username)"
                     
                     self.mapView.addAnnotation(annotation)
-                }
+                    }
             })
             
         }) { (err) in
             print("Failed to fetch places:", err)
         }
+        
     }
     
     
-    func setupLongPressProgressForSavingLocation() {
+   fileprivate func setupLongPressProgressLocation() {
         
         let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(UserPageController.longPress(gestureRecognizer:)))
         uilpgr.minimumPressDuration = 2
@@ -211,8 +216,6 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     fileprivate func setupNavigationItems() {
         
-        navigationItem.title = "Landmark Remark"
-        
          navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogout))
     }
  
@@ -268,7 +271,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    fileprivate func checkLocationForAuthorization() {
+     func checkLocationForAuthorization() {
         
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:

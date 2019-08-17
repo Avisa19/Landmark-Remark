@@ -22,6 +22,7 @@
 		8B7F26B42306CCD9004C215C /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F26B32306CCD9004C215C /* Place.swift */; };
 		8B7F26B62306CFB3004C215C /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F26B52306CFB3004C215C /* MainTabBarController.swift */; };
 		8B7F26B82306D125004C215C /* HomePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F26B72306D125004C215C /* HomePageController.swift */; };
+		8B9905D02307E65100CCC782 /* UserSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9905CF2307E65100CCC782 /* UserSearchController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		8B7F26B32306CCD9004C215C /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		8B7F26B52306CFB3004C215C /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		8B7F26B72306D125004C215C /* HomePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageController.swift; sourceTree = "<group>"; };
+		8B9905CF2307E65100CCC782 /* UserSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchController.swift; sourceTree = "<group>"; };
 		8CD10D8344733956A1CB2385 /* Pods_Landmark_Remark.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Landmark_Remark.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -123,8 +125,9 @@
 		8B7F26A22306B8DC004C215C /* MapView */ = {
 			isa = PBXGroup;
 			children = (
-				8B7F266F23068779004C215C /* UserPageController.swift */,
 				8B7F26B72306D125004C215C /* HomePageController.swift */,
+				8B7F266F23068779004C215C /* UserPageController.swift */,
+				8B9905CF2307E65100CCC782 /* UserSearchController.swift */,
 			);
 			path = MapView;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 				8B7F266E23068779004C215C /* AppDelegate.swift in Sources */,
 				8B7F26AF2306C9C3004C215C /* Database.swift in Sources */,
 				8B7F26A52306B927004C215C /* SignUpController.swift in Sources */,
+				8B9905D02307E65100CCC782 /* UserSearchController.swift in Sources */,
 				8B7F26B82306D125004C215C /* HomePageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
