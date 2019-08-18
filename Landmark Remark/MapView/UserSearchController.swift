@@ -28,18 +28,14 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         return map
     }()
     
-    var users = [User]()
-    var places = [Place]()
-    var filteredUsers = [User]()
     
+    var filteredUsers = [User]()
+    var users = [User]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
-        
-        
-//        fetchUsers()
         
     }
     
@@ -49,11 +45,13 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
             filteredUsers = users
         } else {
             filteredUsers = self.users.filter { (user) -> Bool in
+                
                 return user.username.contains(searchText.lowercased())
             }
+            
+            fetchUsers(users: filteredUsers)
         }
-        
-        fetchUsers()
+       
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -61,7 +59,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
     }
     
     
-    fileprivate func fetchUsers() {
+    fileprivate func fetchUsers(users: [User]) {
         print("Attempting to fetch all users...")
         
         let ref = Database.database().reference().child("users")
@@ -80,7 +78,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 self.users.append(user)
                
                 self.filteredUsers = self.users
-                self.fetchPlacesWithUser(user: user)
+                self.fetchPlacesWithUser(user: user, place: nil)
                
             })
             
@@ -89,9 +87,11 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         }
     }
     
-    func fetchPlacesWithUser(user: User) {
+    func fetchPlacesWithUser(user: User?, place: Place?) {
         
-        let ref = Database.database().reference().child("places").child(user.uid)
+        guard let uid = user?.uid else { return }
+        
+        let ref = Database.database().reference().child("places").child(uid)
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
@@ -99,10 +99,10 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
                 
+                guard let user = user else { return }
+                
                 var place = Place(user: user, dictionary: dictionary)
                 place.id = key
-                
-                self.places.append(place)
                 
                 let latitude = place.lat
                 let longitude = place.lon
@@ -118,8 +118,9 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 let annotation = MKPointAnnotation()
                 
                 annotation.coordinate = coordinate
-                annotation.title = "\(title)" + "\n\(place.user.username)"
-             
+          
+                  annotation.title = "\(title)" + "\n\(place.user.username)"
+                
                 
                 self.mapView.addAnnotation(annotation)
                 

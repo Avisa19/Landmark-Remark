@@ -21,6 +21,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     var user: User?
     
     var locationManager = CLLocationManager()
+    
     let regionInMeters: Double = 10000
     
     var places = [Place]()
@@ -29,6 +30,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     var activePlace = -1
     
+
     let mapView: MKMapView = {
         let map = MKMapView()
         map.showsUserLocation = true
@@ -48,11 +50,10 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         setupLongPressProgressLocation()
         
-//        fetchPlaces()
-        
         fetchUser()
     }
 
+    
     fileprivate func fetchUser() {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -72,12 +73,10 @@ class UserPageController: UIViewController, MKMapViewDelegate {
       
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
-//            print(snapshot.value as Any)
             guard let dictionaries = snapshot.value as? [String: Any] else { return
             }
             
             dictionaries.forEach({ (key, value) in
-//                print("Key: \(key), Value: \(value)")
                 
                 guard let dictionary = value as? [String: Any] else { return }
                
@@ -98,11 +97,12 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                     let region = MKCoordinateRegion(center: coordinate, span: span)
                     
                     self.mapView.setRegion(region, animated: true)
+
+               
                     let annotation = MKPointAnnotation()
-                    
+
                     annotation.coordinate = coordinate
                     annotation.title = "\(title)" + "\n\(user.username)"
-                    
                     self.mapView.addAnnotation(annotation)
                     }
             })
@@ -120,34 +120,6 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         uilpgr.minimumPressDuration = 2
         mapView.addGestureRecognizer(uilpgr)
         
-        if activePlace == -1 {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.startUpdatingLocation()
-        } else {
-            
-            if places.count > activePlace {
-                guard let latitude = place?.lat else { return }
-                guard let longitude = place?.lon else { return }
-                guard let title = place?.text else { return }
-                
-                let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-                
-                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                
-                 let region = MKCoordinateRegion(center: coordinate, span: span)
-                
-                self.mapView.setRegion(region, animated: true)
-                let annotation = MKPointAnnotation()
-                
-                annotation.coordinate = coordinate
-                annotation.title = title
-                
-                self.mapView.addAnnotation(annotation)
-            }
-            
-        }
     }
     
     
@@ -188,7 +160,9 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                 
                  guard let uid = Auth.auth().currentUser?.uid else { return }
                 
-                let values: [String: Any] = ["text": title, "lat": lat, "lon": lon, "id": uid ]
+                let values: [String: Any] = ["text": title, "lat": lat, "lon": lon]
+                
+               
                 
     let ref = Database.database().reference().child("places").child(uid).childByAutoId()
                 
@@ -296,6 +270,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0, centerX: nil, centerY: nil)
       
     }
+    
     
 }
 

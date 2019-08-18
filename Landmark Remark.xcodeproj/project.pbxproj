@@ -125,9 +125,9 @@
 		8B7F26A22306B8DC004C215C /* MapView */ = {
 			isa = PBXGroup;
 			children = (
-				8B7F26B72306D125004C215C /* HomePageController.swift */,
 				8B7F266F23068779004C215C /* UserPageController.swift */,
 				8B9905CF2307E65100CCC782 /* UserSearchController.swift */,
+				8B7F26B72306D125004C215C /* HomePageController.swift */,
 			);
 			path = MapView;
 			sourceTree = "<group>";
