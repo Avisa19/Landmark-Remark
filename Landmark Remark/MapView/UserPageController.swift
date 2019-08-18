@@ -52,19 +52,14 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         fetchUser()
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        fetchPlaces()
-//    }
-    
+
     fileprivate func fetchUser() {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
             print(user.uid, user.username)
             self.user = user
-            self.navigationItem.title = user.username
+            self.navigationItem.title = user.username + " press & hold to save your📍"
             self.fetchPlaces()
         }
         

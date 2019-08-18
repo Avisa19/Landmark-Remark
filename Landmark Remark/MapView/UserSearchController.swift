@@ -38,6 +38,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         
         setupViews()
         
+        
 //        fetchUsers()
         
     }
@@ -54,6 +55,11 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         
         fetchUsers()
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.searchBar.endEditing(true)
+    }
+    
     
     fileprivate func fetchUsers() {
         print("Attempting to fetch all users...")
@@ -113,6 +119,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 
                 annotation.coordinate = coordinate
                 annotation.title = "\(title)" + "\n\(place.user.username)"
+             
                 
                 self.mapView.addAnnotation(annotation)
                 
@@ -136,9 +143,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         view.addSubview(mapView)
         
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0, centerX: nil, centerY: nil)
-        
     }
-    
 }
 
 extension UserSearchController: CLLocationManagerDelegate {

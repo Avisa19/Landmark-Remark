@@ -14,6 +14,23 @@ class SignUpController: UIViewController {
     
     // Add label here for beauty
     
+    
+    let logoContainerView: UIView = {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor.bluiesh
+        
+        let logoImageView = UIImageView(image: UIImage(named: "logoTigerspike"))
+        logoImageView.contentMode = .scaleAspectFill
+        logoImageView.clipsToBounds = true
+        logoImageView.layer.cornerRadius = 5
+        view.addSubview(logoImageView)
+        
+        logoImageView.anchor(top: nil, paddingTop: 0, left: nil, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: nil, paddingRight: 0, width: 80, height: 80, centerX: view.centerXAnchor, centerY: view.centerYAnchor)
+        
+        return view
+    }()
+    
     let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
@@ -59,7 +76,7 @@ class SignUpController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 14)
         
         textField.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
-        
+        textField.isSecureTextEntry = true
         return textField
     }()
     
@@ -148,15 +165,24 @@ class SignUpController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.passwordTextField.endEditing(true)
+        self.emailTextField.endEditing(true)
+        self.usernameTextField.endEditing(true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
         
-        setupInputFields()
-        
         view.addSubview(alreadyHaveAccountButton)
-        alreadyHaveAccountButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -20, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
+        alreadyHaveAccountButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -8, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
+        
+        view.addSubview(logoContainerView)
+        logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 120, centerX: nil, centerY: nil)
+        
+        setupInputFields()
         
     }
     
@@ -170,8 +196,7 @@ class SignUpController: UIViewController {
         stackView.spacing = 10
         stackView.axis = .vertical
         
-        stackView.anchor(top: view.topAnchor, paddingTop: 100, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 200, centerX: nil, centerY: nil)
-        
+        stackView.anchor(top: logoContainerView.bottomAnchor, paddingTop: 20, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 200, centerX: nil, centerY: nil)
     }
 }
 

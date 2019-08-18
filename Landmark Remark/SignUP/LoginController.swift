@@ -16,12 +16,13 @@ class LoginController: UIViewController {
         
         view.backgroundColor = UIColor.bluiesh
         
-        let logoImageView = UIImageView(image: UIImage(named: "instagram")?.withRenderingMode(.alwaysOriginal))
+        let logoImageView = UIImageView(image: UIImage(named: "logoTigerspike"))
         logoImageView.contentMode = .scaleAspectFill
         logoImageView.clipsToBounds = true
+        logoImageView.layer.cornerRadius = 5
         view.addSubview(logoImageView)
         
-        logoImageView.anchor(top: nil, paddingTop: 0, left: nil, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: nil, paddingRight: 0, width: 50, height: 50, centerX: view.centerXAnchor, centerY: view.centerYAnchor)
+        logoImageView.anchor(top: nil, paddingTop: 0, left: nil, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: nil, paddingRight: 0, width: 80, height: 80, centerX: view.centerXAnchor, centerY: view.centerYAnchor)
         
         return view
     }()
@@ -58,9 +59,14 @@ class LoginController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 14)
         
         textField.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
-        
+        textField.isSecureTextEntry = true
         return textField
     }()
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.passwordTextField.endEditing(true)
+        self.emailTextField.endEditing(true)
+    }
     
     @objc private func handleTextInputChange() {
         
@@ -138,7 +144,7 @@ class LoginController: UIViewController {
         signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -20, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
         
         view.addSubview(logoContainerView)
-        logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 125, centerX: nil, centerY: nil)
+        logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 120, centerX: nil, centerY: nil)
         
         setupInputFields()
     }
@@ -157,7 +163,7 @@ class LoginController: UIViewController {
         stackView.spacing = 10
         stackView.axis = .vertical
         
-        stackView.anchor(top: logoContainerView.bottomAnchor, paddingTop: 40, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 140, centerX: nil, centerY: nil)
+        stackView.anchor(top: logoContainerView.bottomAnchor, paddingTop: 20, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 140, centerX: nil, centerY: nil)
         
     }
 }
