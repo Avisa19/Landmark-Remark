@@ -37,10 +37,20 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         return map
     }()
     
- 
+    let noteTextField: UITextField = {
+       let textField = UITextField()
+        textField.placeholder = "Type note here, hold your finger in your📍"
+        textField.backgroundColor = .grayiesh
+        textField.layer.cornerRadius = 10
+        textField.layer.masksToBounds = true
+        return textField
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        mapView.delegate = self
         
         setupViews()
         
@@ -52,15 +62,26 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         fetchUser()
     }
-
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        fetchUser()
+//    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchUser()
+    }
     
     fileprivate func fetchUser() {
+        
+        noteTextField.text = ""
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
             print(user.uid, user.username)
             self.user = user
-            self.navigationItem.title = user.username + " press & hold to save your📍"
+//            self.navigationItem.title = user.username + " press & hold to save your📍"
             self.fetchPlaces()
         }
         
@@ -88,7 +109,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                 if self.places.count > self.activePlace {
                     let latitude = place.lat
                     let longitude = place.lon
-                    let title = place.text 
+                    let title = place.text
+                    let note = place.note
                     
                     let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
                     
@@ -100,10 +122,13 @@ class UserPageController: UIViewController, MKMapViewDelegate {
 
                
                     let annotation = MKPointAnnotation()
-
+                    
                     annotation.coordinate = coordinate
-                    annotation.title = "\(title)" + "\n\(user.username)"
+                    
+                    annotation.title = "\(note)\n" + "\(title)" + "\n\(user.username)"
+        
                     self.mapView.addAnnotation(annotation)
+                    self.noteTextField.text = ""
                     }
             })
             
@@ -134,6 +159,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             let lat = newCoordinate.latitude
             let lon = newCoordinate.longitude
             var title = ""
+           
             CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if error != nil {
                     print(error!)
@@ -153,15 +179,17 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                     title = "Added \(NSDate())"
                 }
                 
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = newCoordinate
-                annotation.title = title
-                self.mapView.addAnnotation(annotation)
+               
                 
                  guard let uid = Auth.auth().currentUser?.uid else { return }
+                guard let note = self.noteTextField.text else { return }
+                guard let username = self.user?.username else { return }
                 
-                let values: [String: Any] = ["text": title, "lat": lat, "lon": lon]
-                
+                let values: [String: Any] = ["text": title, "lat": lat, "lon": lon, "note": note]
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = newCoordinate
+                annotation.title = "\(note)\n" + "\(title)" + "\n\(username)"
+                self.mapView.addAnnotation(annotation)
                
                 
     let ref = Database.database().reference().child("places").child(uid).childByAutoId()
@@ -174,6 +202,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                     }
                     
                     print("Successfully saved to DB.")
+                    
                     self.mapView.addAnnotation(annotation)
                  self.dismiss(animated: true, completion: nil)
                 })
@@ -182,8 +211,17 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    fileprivate func saveToDataBase(values: [String: Any]) {
+        
+    }
+    
     
     fileprivate func setupNavigationItems() {
+        
+        let navBar = navigationController?.navigationBar
+        
+        navBar?.addSubview(noteTextField)
+        noteTextField.anchor(top: navBar?.topAnchor, paddingTop: 12, left: navBar?.leftAnchor, paddingLeft: 4, bottom: navBar?.bottomAnchor, paddingBottom: -4, right: nil, paddingRight: 0, width: 325, height: 50, centerX: nil, centerY: nil)
         
          navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout"), style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.white

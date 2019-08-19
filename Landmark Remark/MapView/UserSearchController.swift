@@ -35,23 +35,27 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        mapView.delegate = self
         setupViews()
-        
     }
+   
     
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
+
         if searchText.isEmpty {
             filteredUsers = users
+
         } else {
             filteredUsers = self.users.filter { (user) -> Bool in
-                
-                return user.username.contains(searchText.lowercased())
+
+                return user.username.lowercased() == searchText
             }
-            
-            fetchUsers(users: filteredUsers)
+            fetchUsers()
         }
-       
+        
+//        fetchUsers()
+
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -59,7 +63,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
     }
     
     
-    fileprivate func fetchUsers(users: [User]) {
+    fileprivate func fetchUsers() {
         print("Attempting to fetch all users...")
         
         let ref = Database.database().reference().child("users")
@@ -75,23 +79,22 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 
                 guard let userDictionary = value as? [String: Any] else { return }
                 let user = User(uid: key, dictionary: userDictionary)
-                self.users.append(user)
-               
-                self.filteredUsers = self.users
-                self.fetchPlacesWithUser(user: user, place: nil)
-               
+                
+                    self.fetchPlacesWithUser(user: user)
+                    self.users.append(user)
+                    
+                    self.filteredUsers = self.users
+                
             })
             
         }) { (err) in
             print("Failed to fetch users:", err)
         }
+        
     }
     
-    func fetchPlacesWithUser(user: User?, place: Place?) {
-        
-        guard let uid = user?.uid else { return }
-        
-        let ref = Database.database().reference().child("places").child(uid)
+    func fetchPlacesWithUser(user: User) {
+        let ref = Database.database().reference().child("places").child(user.uid)
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
@@ -99,14 +102,13 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
                 
-                guard let user = user else { return }
-                
                 var place = Place(user: user, dictionary: dictionary)
                 place.id = key
                 
                 let latitude = place.lat
                 let longitude = place.lon
                 let title = place.text
+                let note = place.note
                 
                 let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
                 
@@ -116,10 +118,10 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 
                 self.mapView.setRegion(region, animated: true)
                 let annotation = MKPointAnnotation()
-                
+            
                 annotation.coordinate = coordinate
           
-                  annotation.title = "\(title)" + "\n\(place.user.username)"
+                annotation.title = "\(note)\n" + "\(title)" + "\n\(user.username)"
                 
                 
                 self.mapView.addAnnotation(annotation)
@@ -145,21 +147,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         
         mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0, centerX: nil, centerY: nil)
     }
+    
 }
 
-extension UserSearchController: CLLocationManagerDelegate {
-    
-    private func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-    {
-        let location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
-        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        let region = MKCoordinateRegion(center: location, span: span)
-        
-        mapView.setRegion(region, animated: true)
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print("Error")
-    }
-}
 
