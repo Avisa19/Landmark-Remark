@@ -60,7 +60,10 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         setupLongPressProgressLocation()
         
-        fetchUser()
+        centerViewOnUserLocation()
+        
+        
+//        fetchUser()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -71,6 +74,11 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchUser()
+    }
+    
+    // to dismiss the keyboard when finishing
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        noteTextField.resignFirstResponder()
     }
     
     fileprivate func fetchUser() {
@@ -211,10 +219,6 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    fileprivate func saveToDataBase(values: [String: Any]) {
-        
-    }
-    
     
     fileprivate func setupNavigationItems() {
         
@@ -262,12 +266,15 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
     }
     
+    // fire up CLLocation delegate
     fileprivate func setupLocationManager() {
         
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         
     }
+    
+    var signupController: SignUpController?
     
    fileprivate func checkLocationServices() {
         if CLLocationManager.locationServicesEnabled() {
@@ -276,9 +283,11 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             checkLocationForAuthorization()
         } else {
             // show alert letting the user know they have to turn this on
+        signupController?.setupAlertForUser(title: "We don't have access to your location", message: "Please give us permission")
         }
     }
     
+    // check Authorization with user
      func checkLocationForAuthorization() {
         
         switch CLLocationManager.authorizationStatus() {
@@ -301,6 +310,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         }
     }
 
+    // setup views along with contraint
      func setupViews() {
 
         view.addSubview(mapView)
@@ -312,6 +322,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
 }
 
+// Use this delegate to track the user current location
 extension UserPageController: CLLocationManagerDelegate {
     
     private func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
@@ -323,6 +334,7 @@ extension UserPageController: CLLocationManagerDelegate {
         mapView.setRegion(region, animated: true)
     }
     
+    // check if Authorized change
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkLocationForAuthorization()
     }
