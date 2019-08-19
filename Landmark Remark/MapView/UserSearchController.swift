@@ -13,12 +13,18 @@ import CoreLocation
 
 
 class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
+  
+    var filteredUsers = [User]()
+    
+    var users = [User]()
     
     lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
         sb.placeholder = "Enter username"
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor.grayiesh
         sb.delegate = self
+        sb.isUserInteractionEnabled = true
+        sb.returnKeyType = .done
         return sb
     }()
     
@@ -29,10 +35,6 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         return map
     }()
     
-    var user: User?
-    
-    var filteredUsers = [User]()
-    var users = [User]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,41 +43,39 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         
 //        fetchUsers()
     }
-    
- 
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchUsers()
-    }
-    
-   
-    
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
+        filteredUsers = fetchUsers()
+    }
+  
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
         if searchText.isEmpty {
-            
+          
             filteredUsers = users
             
         } else {
-            
-            filteredUsers = self.users.filter { (user) -> Bool in
-                
+           
+            filteredUsers = self.fetchUsers().filter { (user) -> Bool in
                 return user.username.lowercased() == searchText.lowercased()
             }
         }
         
-        filteredUsers = users
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         self.searchBar.endEditing(true)
+       
     }
     
     
-    fileprivate func fetchUsers() {
+    fileprivate func fetchUsers() -> [User] {
         print("Attempting to fetch all users...")
+     
+
         
         let ref = Database.database().reference().child("users")
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -91,22 +91,25 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 }
                 
                 guard let userDictionary = value as? [String: Any] else { return }
+                
                 let user = User(uid: key, dictionary: userDictionary)
                 
-                    self.users.append(user)
+                self.fetchPlacesWithUser(user: user)
                 
-                 self.fetchPlacesWithUser(user: user)
-            })
-            
-            self.users.sort(by: { (u1, u2) -> Bool in
-                return u1.username.compare(u2.username) == .orderedAscending
+                self.users.append(user)
+                
             })
             
             self.filteredUsers = self.users
+            self.users.removeAll()
+            let allAnnotations = self.mapView.annotations
+            self.mapView.removeAnnotations(allAnnotations)
             
         }) { (err) in
             print("Failed to fetch users:", err)
         }
+        
+        return filteredUsers
         
     }
     

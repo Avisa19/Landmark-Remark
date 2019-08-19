@@ -92,7 +92,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Database.fetchUserWithUID(uid: uid) { (user) in
-            print(user.uid, user.username)
+            
             self.user = user
             self.navigationItem.title = user.username
             self.fetchPlaces()
@@ -118,13 +118,11 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                
                 guard let user = self.user else { return }
                 let place = Place(user: user, dictionary: dictionary)
-//               print(place.text)
                 self.places.append(place)
                
                 if self.places.count > self.activePlace {
                     let latitude = place.lat
                     let longitude = place.lon
-//                    let title = place.text
                     let note = place.note
                     
                     let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -231,12 +229,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     
     fileprivate func setupNavigationItems() {
-        
-//        let navBar = navigationController?.navigationBar
-//
-//        navBar?.addSubview(noteTextField)
-//        noteTextField.anchor(top: navBar?.topAnchor, paddingTop: 12, left: navBar?.leftAnchor, paddingLeft: 4, bottom: navBar?.bottomAnchor, paddingBottom: -4, right: nil, paddingRight: 0, width: 325, height: 50, centerX: nil, centerY: nil)
-        
+
          navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout"), style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.white
     }
@@ -332,7 +325,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         sepearatorLineView.anchor(top: noteTextField.bottomAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0.5, centerX: nil, centerY: nil)
 
         view.addSubview(mapView)
-
+       // I use helper for my contraint, I add it in utilities.
         mapView.anchor(top: sepearatorLineView.bottomAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0, centerX: nil, centerY: nil)
       
     }
