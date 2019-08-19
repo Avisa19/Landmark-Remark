@@ -12,9 +12,6 @@ import Firebase
 
 class SignUpController: UIViewController {
     
-    // Add label here for beauty
-    
-    
     let logoContainerView: UIView = {
         let view = UIView()
         

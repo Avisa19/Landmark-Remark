@@ -39,28 +39,36 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         
         setupViews()
         
-        // for checking
 //        fetchUsers()
     }
+    
+ 
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchUsers()
+    }
+    
    
     
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-
+        
         if searchText.isEmpty {
+            
             filteredUsers = users
-
+            
         } else {
+            
             filteredUsers = self.users.filter { (user) -> Bool in
-
+                
                 return user.username.lowercased() == searchText.lowercased()
             }
         }
         
-        fetchUsers()
-
+        filteredUsers = users
     }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.searchBar.endEditing(true)
     }
@@ -86,7 +94,12 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 let user = User(uid: key, dictionary: userDictionary)
                 
                     self.users.append(user)
+                
                  self.fetchPlacesWithUser(user: user)
+            })
+            
+            self.users.sort(by: { (u1, u2) -> Bool in
+                return u1.username.compare(u2.username) == .orderedAscending
             })
             
             self.filteredUsers = self.users
@@ -111,7 +124,6 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 
                 let latitude = place.lat
                 let longitude = place.lon
-//                let title = place.text
                 let note = place.note
                 
                 let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -127,16 +139,12 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
           
                 annotation.title = "\(note)\n" + "\n\(user.username)"
                 
-                
                 self.mapView.addAnnotation(annotation)
-                
-                
             })
             
         }) { (err) in
             print("Failed to fetch all places:", err)
         }
-        
     }
     
    fileprivate func setupViews() {

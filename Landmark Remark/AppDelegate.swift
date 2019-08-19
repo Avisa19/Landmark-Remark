@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         
+        // Create rootViewController
+        
         window = UIWindow()
         window?.makeKeyAndVisible()
         
