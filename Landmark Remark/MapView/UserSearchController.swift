@@ -22,12 +22,14 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         return sb
     }()
     
-    let mapView: MKMapView = {
+    lazy var mapView: MKMapView = {
         let map = MKMapView()
         map.showsUserLocation = true
+        map.delegate = self
         return map
     }()
     
+    var user: User?
     
     var filteredUsers = [User]()
     var users = [User]()
@@ -35,8 +37,10 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        mapView.delegate = self
         setupViews()
+        
+        // for checking
+//        fetchUsers()
     }
    
     
@@ -49,12 +53,11 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
         } else {
             filteredUsers = self.users.filter { (user) -> Bool in
 
-                return user.username.lowercased() == searchText
+                return user.username.lowercased() == searchText.lowercased()
             }
-            fetchUsers()
         }
         
-//        fetchUsers()
+        fetchUsers()
 
     }
     
@@ -72,20 +75,21 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             dictionaries.forEach({ (key, value) in
                 
-//                if key == Auth.auth().currentUser?.uid {
-//                    print("Found myself and omit")
-////                    return
-//                }
+                // current users can see their location on UserPageController
+                
+                if key == Auth.auth().currentUser?.uid {
+                    print("Found myself and omit")
+                    return
+                }
                 
                 guard let userDictionary = value as? [String: Any] else { return }
                 let user = User(uid: key, dictionary: userDictionary)
                 
-                    self.fetchPlacesWithUser(user: user)
                     self.users.append(user)
-                    
-                    self.filteredUsers = self.users
-                
+                 self.fetchPlacesWithUser(user: user)
             })
+            
+            self.filteredUsers = self.users
             
         }) { (err) in
             print("Failed to fetch users:", err)
@@ -107,7 +111,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
                 
                 let latitude = place.lat
                 let longitude = place.lon
-                let title = place.text
+//                let title = place.text
                 let note = place.note
                 
                 let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -121,7 +125,7 @@ class UserSearchController: UIViewController, MKMapViewDelegate, UISearchBarDele
             
                 annotation.coordinate = coordinate
           
-                annotation.title = "\(note)\n" + "\(title)" + "\n\(user.username)"
+                annotation.title = "\(note)\n" + "\n\(user.username)"
                 
                 
                 self.mapView.addAnnotation(annotation)
