@@ -16,17 +16,15 @@ import Firebase
 class UserPageController: UIViewController, MKMapViewDelegate {
     
     
-    var uid: String?
-    
-    var user: User?
+    var userId: String?
     
     var locationManager = CLLocationManager()
     
     let regionInMeters: Double = 10000
-    
-    var places = [Place]()
-    
-    var place: Place?
+//
+//    var places = [Place]()
+//
+//    var place: Place?
     
     var activePlace = -1
     
@@ -58,6 +56,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        fetchUser()
+        
         
         setupViews()
         
@@ -69,89 +69,75 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         centerViewOnUserLocation()
         
-        
-//        fetchUser()
     }
 
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        fetchUser()
-    }
-    
     // to dismiss the keyboard when finishing
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         noteTextField.resignFirstResponder()
     }
     
-    // fetch data according to current user
+    // fetch data according to user
     
-    fileprivate func fetchUser() {
-        
-        noteTextField.text = ""
+    
+     func fetchUser() {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
+        
         Database.fetchUserWithUID(uid: uid) { (user) in
             
-            self.user = user
+            print(user.username)
+//            self.user = user
             self.navigationItem.title = user.username
-            self.fetchPlaces()
+            self.fetchPlacesWithUser()
         }
         
     }
     
-    // fetch places according to current user
+    var user: User?
     
-    fileprivate func fetchPlaces() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        print(uid)
-        let ref = Database.database().reference().child("places").child(uid)
-      
+    fileprivate func fetchPlacesWithUser() {
+        
+        guard let userId = user?.uid else { return }
+        
+        let ref = Database.database().reference().child("places").child(userId)
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
-            guard let dictionaries = snapshot.value as? [String: Any] else { return
-            }
-            
+            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+           
             dictionaries.forEach({ (key, value) in
-                
                 guard let dictionary = value as? [String: Any] else { return }
-               
+                
                 guard let user = self.user else { return }
+    
                 let place = Place(user: user, dictionary: dictionary)
-                self.places.append(place)
-               
-                if self.places.count > self.activePlace {
-                    let latitude = place.lat
-                    let longitude = place.lon
-                    let note = place.note
-                    
-                    let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-                    
-                    let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                    
-                    let region = MKCoordinateRegion(center: coordinate, span: span)
-                    
-                    self.mapView.setRegion(region, animated: true)
-
-               
-                    let annotation = MKPointAnnotation()
-                    
-                    annotation.coordinate = coordinate
-                    
-                    annotation.title = "\(note)\n" + "\n\(user.username)"
-        
-                    self.mapView.addAnnotation(annotation)
-                    }
+//                place.id = key
+//
+//                self.places.append(place)
+    
+                let latitude = place.lat
+                let longitude = place.lon
+                let note = place.note
+    
+                let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+//
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    
+                let region = MKCoordinateRegion(center: coordinate, span: span)
+    
+                self.mapView.setRegion(region, animated: true)
+                let annotation = MKPointAnnotation()
+    
+                annotation.coordinate = coordinate
+                annotation.title = "\(note)\n" + "\n\(user.username)"
+                self.mapView.addAnnotation(annotation)
             })
-            
+
         }) { (err) in
-            print("Failed to fetch places:", err)
+            print("Failed to fetch all places:", err)
         }
-        
+
     }
-    
-    
-    
+
    fileprivate func setupLongPressProgressLocation() {
         
         let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(UserPageController.longPress(gestureRecognizer:)))
