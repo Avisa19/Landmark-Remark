@@ -21,10 +21,10 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     var locationManager = CLLocationManager()
     
     let regionInMeters: Double = 10000
-//
-//    var places = [Place]()
-//
-//    var place: Place?
+
+    var places = [Place]()
+
+    var place: Place?
     
     var activePlace = -1
     
@@ -55,10 +55,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        fetchUser()
-        
-        
+                
         setupViews()
         
         checkLocationServices()
@@ -68,6 +65,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         setupLongPressProgressLocation()
         
         centerViewOnUserLocation()
+        
+         fetchUser()
         
     }
 
@@ -86,7 +85,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         Database.fetchUserWithUID(uid: uid) { (user) in
             
             print(user.username)
-//            self.user = user
+            self.user = user
             self.navigationItem.title = user.username
             self.fetchPlacesWithUser()
         }
@@ -109,10 +108,10 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                 
                 guard let user = self.user else { return }
     
-                let place = Place(user: user, dictionary: dictionary)
-//                place.id = key
-//
-//                self.places.append(place)
+                var place = Place(user: user, dictionary: dictionary)
+                place.id = key
+
+                self.places.append(place)
     
                 let latitude = place.lat
                 let longitude = place.lon
@@ -137,33 +136,58 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         }
 
     }
-
-   fileprivate func setupLongPressProgressLocation() {
+    
+    fileprivate func setupLongPressProgressLocation() {
         
         let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(UserPageController.longPress(gestureRecognizer:)))
         uilpgr.minimumPressDuration = 2
         mapView.addGestureRecognizer(uilpgr)
         
+        if activePlace == -1 {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.startUpdatingLocation()
+        } else {
+
+            if places.count > activePlace {
+                guard let latitude = place?.lat else { return }
+                guard let longitude = place?.lon else { return }
+                guard let title = place?.note else { return }
+
+                let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+                let region = MKCoordinateRegion(center: coordinate, span: span)
+
+                self.mapView.setRegion(region, animated: true)
+                let annotation = MKPointAnnotation()
+
+                annotation.coordinate = coordinate
+                annotation.title = title
+
+                self.mapView.addAnnotation(annotation)
+            }
+        }
     }
     
     
     //MARK - Method for longPress
     @objc func longPress(gestureRecognizer: UIGestureRecognizer) {
+        
+        print(1233333)
      
         if gestureRecognizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureRecognizer.location(in: self.mapView)
             let newCoordinate = self.mapView.convert(touchPoint, toCoordinateFrom: self.mapView)
+            //            print(newCoordinate)
+        
             let lat = newCoordinate.latitude
             let lon = newCoordinate.longitude
             
-            // I didn't delet these comments to show you how to save a short address also added to note and username, but I didn't see in the requirment, that's why I comment it.
-            
-            
-            //            print(newCoordinate)
-//            let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
-           
+//                let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
 //            var title = ""
-//
 //            CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
 //                if error != nil {
 //                    print(error!)
@@ -182,36 +206,37 @@ class UserPageController: UIViewController, MKMapViewDelegate {
 //                if title == "" {
 //                    title = "Added \(NSDate())"
 //                }
+//
             
-        
                 
-                 guard let uid = Auth.auth().currentUser?.uid else { return }
+                guard let uid = Auth.auth().currentUser?.uid else { return }
                 guard let note = self.noteTextField.text else { return }
                 guard let username = self.user?.username else { return }
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = newCoordinate
+            annotation.title = "\(note)" + "\n\(username)"
+            //                self.mapView.addAnnotation(annotation)
+            
+            let values: [String: Any] = ["note": note, "lat": lat, "lon": lon ]
+            
+            let ref = Database.database().reference().child("places").child(uid).childByAutoId()
+            
+            
+            ref.updateChildValues(values, withCompletionBlock: { (err, _) in
+                if let error = err {
+                    print("Failed to saved to DB:", error)
+                    return
+                }
                 
-                let values: [String: Any] = ["lat": lat, "lon": lon, "note": note]
-                
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = newCoordinate
-                annotation.title = "\(note)\n" + "\n\(username)"
-//                self.mapView.addAnnotation(annotation)
-               
-                
-    let ref = Database.database().reference().child("places").child(uid).childByAutoId()
-                
-                
-                ref.updateChildValues(values, withCompletionBlock: { (err, _) in
-                    if let error = err {
-                        print("Failed to saved to DB:", error)
-                        return
-                    }
-                    
-                    print("Successfully saved to DB.")
-                    self.mapView.addAnnotation(annotation)
-                 self.dismiss(animated: true, completion: nil)
-                })
+                print("Successfully saved to DB.")
+                self.mapView.addAnnotation(annotation)
+                self.dismiss(animated: true, completion: nil)
+            })
+            
         }
     }
+    
     
     
     fileprivate func setupNavigationItems() {
