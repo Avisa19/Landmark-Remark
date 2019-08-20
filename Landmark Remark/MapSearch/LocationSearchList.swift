@@ -147,8 +147,11 @@ class LocationSearchList: UICollectionViewController, UICollectionViewDelegateFl
         searchBar.resignFirstResponder()
         searchMapController.userId = user.uid
         searchMapController.navigationItem.title = user.username
+      
+       
         navigationController?.pushViewController(searchMapController, animated: true)
     
+        navigationController?.navigationBar.tintColor = UIColor.white
         
         dismiss(animated: true, completion: nil)
     }

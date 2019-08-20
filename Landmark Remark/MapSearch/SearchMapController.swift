@@ -14,7 +14,6 @@ import Firebase
 
 class SearchMapController: UIViewController, MKMapViewDelegate {
     
-    
     var userId: String?
     
     lazy var myMap: MKMapView = {
@@ -44,9 +43,6 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
             self.navigationItem.title = user.username
             self.fetchPlacesWithUser(user: user)
         }
-        
-        
-        
     }
     
     fileprivate func fetchPlacesWithUser(user: User) {
@@ -62,9 +58,8 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
                 guard let user = self.user else { return }
                 
                 var place = Place(user: user, dictionary: dictionary)
-                place.id = key
                 
-                //                self.places.append(place)
+                place.id = key
                 
                 let latitude = place.lat
                 let longitude = place.lon
@@ -97,14 +92,5 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
         
     }
 
-    // help to create Vc embeded in navigationController
-    func templateNavController( rootViewController: UIViewController = UIViewController()) -> UINavigationController {
-        
-        let viewController = rootViewController
-        
-        let navController = UINavigationController(rootViewController: viewController)
-        
-        return navController
-    }
 }
 
