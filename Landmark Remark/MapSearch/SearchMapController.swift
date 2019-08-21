@@ -19,7 +19,6 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
     lazy var myMap: MKMapView = {
         let map = MKMapView()
         map.delegate = self
-        map.showsUserLocation = true
         return map
     }()
     
@@ -64,9 +63,10 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
                 let latitude = place.lat
                 let longitude = place.lon
                 let note = place.note
+                let address = place.location
                 
                 let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-                //
+               
                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                 
                 let region = MKCoordinateRegion(center: coordinate, span: span)
@@ -75,7 +75,7 @@ class SearchMapController: UIViewController, MKMapViewDelegate {
                 let annotation = MKPointAnnotation()
                 
                 annotation.coordinate = coordinate
-                annotation.title = "\(note)\n" + "\n\(user.username)"
+                annotation.title = "\(note)" + "\n\(user.username)" + "\n\n\(address)"
                 self.myMap.addAnnotation(annotation)
             })
             

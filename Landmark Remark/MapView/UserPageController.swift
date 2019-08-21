@@ -181,30 +181,28 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             let lat = newCoordinate.latitude
             let lon = newCoordinate.longitude
             
-            // We can save a short address but because it was not on requirement list I comment it.
+            // We can save a short address along with username and short not
             
-//                let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
-//            var title = ""
-//            CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
-//                if error != nil {
-//                    print(error!)
-//                } else {
-//                    if let placemark = placemarks?[0] {
-//                        if placemark.subThoroughfare != nil {
-//                            title += placemark.subThoroughfare! + " "
-//                        }
-//                        if placemark.thoroughfare != nil {
-//                            title += placemark.thoroughfare!
-//                        }
-//                    }
-//                }
-//
-//
-//                if title == "" {
-//                    title = "Added \(NSDate())"
-//                }
-//
-            
+                let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
+            var address = ""
+            CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
+                if error != nil {
+                    print(error!)
+                } else {
+                    if let placemark = placemarks?[0] {
+                        if placemark.subThoroughfare != nil {
+                            address += placemark.subThoroughfare! + " "
+                        }
+                        if placemark.thoroughfare != nil {
+                            address += placemark.thoroughfare!
+                        }
+                    }
+                }
+
+
+                if address == "" {
+                    address = "Added \(NSDate())"
+                }
                 
                 guard let uid = Auth.auth().currentUser?.uid else { return }
                 guard let note = self.noteTextField.text else { return }
@@ -212,25 +210,25 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = newCoordinate
-            annotation.title = "\(note)" + "\n\(username)"
+            annotation.title = "\(note)" + "\n\(username)" + "\n\n\(address)"
             //                self.mapView.addAnnotation(annotation)
             
-            let values: [String: Any] = ["note": note, "lat": lat, "lon": lon ]
+                let values: [String: Any] = ["note": note, "lat": lat, "lon": lon, "location": address]
             
             let ref = Database.database().reference().child("places").child(uid).childByAutoId()
-            
-            
-            ref.updateChildValues(values, withCompletionBlock: { (err, _) in
-                if let error = err {
-                    print("Failed to saved to DB:", error)
-                    return
-                }
                 
-                print("Successfully saved to DB.")
-                self.mapView.addAnnotation(annotation)
-                self.dismiss(animated: true, completion: nil)
+                
+                ref.updateChildValues(values, withCompletionBlock: { (err, _) in
+                    if let error = err {
+                        print("Failed to saved to DB:", error)
+                        return
+                    }
+                    
+                    print("Successfully saved to DB.")
+                    self.mapView.addAnnotation(annotation)
+                    self.dismiss(animated: true, completion: nil)
+                })
             })
-            
         }
     }
     

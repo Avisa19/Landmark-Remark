@@ -19,12 +19,9 @@ class LocationSearchList: UICollectionViewController, UICollectionViewDelegateFl
     
     var filteredUsers = [User]()
     
-    var myMap: MKMapView? = nil
-    
-    
     lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
-        sb.placeholder = "Enter search text"
+        sb.placeholder = "Enter username"
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor.grayiesh
         sb.delegate = self
         return sb
