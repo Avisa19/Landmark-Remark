@@ -145,7 +145,7 @@ class LoginController: UIViewController {
         view.backgroundColor = .white
         
         view.addSubview(signupButton)
-        signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -5, right: view.rightAnchor, paddingRight: 0, width: 0, height: 44, centerX: nil, centerY: nil)
+        signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -8, right: view.rightAnchor, paddingRight: 0, width: 0, height: 44, centerX: nil, centerY: nil)
         
         view.addSubview(logoContainerView)
         logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 120, centerX: nil, centerY: nil)
@@ -164,7 +164,7 @@ class LoginController: UIViewController {
         stackView.spacing = 10
         stackView.axis = .vertical
         
-        stackView.anchor(top: logoContainerView.bottomAnchor, paddingTop: 20, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 140, centerX: nil, centerY: nil)
+        stackView.anchor(top: logoContainerView.bottomAnchor, paddingTop: 12, left: view.leftAnchor, paddingLeft: 40, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: -40, width: 0, height: 140, centerX: nil, centerY: nil)
         
     }
 }
