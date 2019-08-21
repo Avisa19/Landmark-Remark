@@ -63,6 +63,7 @@ class LoginController: UIViewController {
         return textField
     }()
     
+    // dismissing keyboard after finished typing.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.passwordTextField.endEditing(true)
         self.emailTextField.endEditing(true)
@@ -96,6 +97,8 @@ class LoginController: UIViewController {
         return button
     }()
     
+    
+    // handle login
     @objc private func handleLogin() {
         print("Attempting to Login...")
         
@@ -131,17 +134,18 @@ class LoginController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // we can do the segue and at the time we don't want navBar
-        navigationController?.isNavigationBarHidden = true
-        
-        view.backgroundColor = .white
         
         setupViews()
     }
     
     private func setupViews() {
         
+        navigationController?.isNavigationBarHidden = true
+        
+        view.backgroundColor = .white
+        
         view.addSubview(signupButton)
-        signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -20, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
+        signupButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -5, right: view.rightAnchor, paddingRight: 0, width: 0, height: 44, centerX: nil, centerY: nil)
         
         view.addSubview(logoContainerView)
         logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 120, centerX: nil, centerY: nil)
@@ -149,9 +153,6 @@ class LoginController: UIViewController {
         setupInputFields()
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
     
     fileprivate func setupInputFields() {
         

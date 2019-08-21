@@ -115,7 +115,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
                 let note = place.note
     
                 let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-//
+
                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     
                 let region = MKCoordinateRegion(center: coordinate, span: span)
@@ -181,7 +181,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             let lat = newCoordinate.latitude
             let lon = newCoordinate.longitude
             
-            // We can save a short address along with username and short not
+            // We can save a short address along with username and short note
             
                 let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
             var address = ""
@@ -211,7 +211,6 @@ class UserPageController: UIViewController, MKMapViewDelegate {
             let annotation = MKPointAnnotation()
             annotation.coordinate = newCoordinate
             annotation.title = "\(note)" + "\n\(username)" + "\n\n\(address)"
-            //                self.mapView.addAnnotation(annotation)
             
                 let values: [String: Any] = ["note": note, "lat": lat, "lon": lon, "location": address]
             
@@ -233,7 +232,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     }
     
     
-    
+    //setting up navigation View.
     fileprivate func setupNavigationItems() {
 
          navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout"), style: .plain, target: self, action: #selector(handleLogout))

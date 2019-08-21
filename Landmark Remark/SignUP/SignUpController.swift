@@ -40,6 +40,7 @@ class SignUpController: UIViewController {
         return textField
     }()
     
+    // Only when three input Field are fill you can continue, otherwise you will recieve alarm. you I mean user.
     @objc private func handleTextInputChange() {
         
         let isInputTextValid = emailTextField.text?.count ?? 0 > 0 && usernameTextField.text?.count ?? 0 > 0 && passwordTextField.text?.count ?? 0 > 0
@@ -52,6 +53,8 @@ class SignUpController: UIViewController {
             signupButton.backgroundColor = .lightBlue
         }
     }
+    
+    // create textfields
     
     let usernameTextField: UITextField = {
         let textField = UITextField()
@@ -92,6 +95,8 @@ class SignUpController: UIViewController {
         return button
     }()
     
+    // end of page creating a button for interact between sign in and sign up.
+    
     let alreadyHaveAccountButton: UIButton = {
         let button = UIButton(type: .system)
         
@@ -112,6 +117,8 @@ class SignUpController: UIViewController {
         _ = navigationController?.popViewController(animated: true)
         
     }
+    
+    // handling sign up
     
     @objc func handleSignUp() {
         
@@ -156,12 +163,15 @@ class SignUpController: UIViewController {
         
     }
     
+    // set up alert func for using in cases we need.
+    
     func setupAlertForUser(title: String?, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
+    // for dismissing keyborad after finishing typing.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.passwordTextField.endEditing(true)
         self.emailTextField.endEditing(true)
@@ -171,10 +181,16 @@ class SignUpController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupViews()
+        
+    }
+    
+    fileprivate func setupViews() {
+        
         view.backgroundColor = .white
         
         view.addSubview(alreadyHaveAccountButton)
-        alreadyHaveAccountButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -8, right: view.rightAnchor, paddingRight: 0, width: 0, height: 50, centerX: nil, centerY: nil)
+        alreadyHaveAccountButton.anchor(top: nil, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: view.bottomAnchor, paddingBottom: -4, right: view.rightAnchor, paddingRight: 0, width: 0, height: 44, centerX: nil, centerY: nil)
         
         view.addSubview(logoContainerView)
         logoContainerView.anchor(top: view.topAnchor, paddingTop: 0, left: view.leftAnchor, paddingLeft: 0, bottom: nil, paddingBottom: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 120, centerX: nil, centerY: nil)

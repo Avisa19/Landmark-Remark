@@ -15,7 +15,7 @@ struct User {
     let username: String
     
     
-    // And we need constructor help us to setup these two prperties.
+    // And we need constructor help us to setup these two properties.
     
     init(uid: String, dictionary: [String: Any]) {
         
