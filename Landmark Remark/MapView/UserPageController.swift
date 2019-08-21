@@ -15,9 +15,6 @@ import Firebase
 
 class UserPageController: UIViewController, MKMapViewDelegate {
     
-    
-    var userId: String?
-    
     var locationManager = CLLocationManager()
     
     let regionInMeters: Double = 10000
@@ -27,6 +24,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     var place: Place?
     
     var activePlace = -1
+    
+    var user: User?
     
 
     lazy var mapView: MKMapView = {
@@ -38,10 +37,11 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     let noteTextField: UITextField = {
        let textField = UITextField()
-        textField.placeholder = " Type note here & hold your finger in 📍"
+        textField.placeholder = " Type note here & hold your finger in your 📍"
         textField.backgroundColor = .grayiesh
         textField.layer.cornerRadius = 10
         textField.layer.masksToBounds = true
+        textField.clearsOnBeginEditing = true
         return textField
     }()
     
@@ -75,7 +75,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         noteTextField.resignFirstResponder()
     }
     
-    // fetch data according to user
+    // fetch data according to current user
     
     
      func fetchUser() {
@@ -84,15 +84,12 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         Database.fetchUserWithUID(uid: uid) { (user) in
             
-            print(user.username)
             self.user = user
             self.navigationItem.title = user.username
             self.fetchPlacesWithUser()
         }
         
     }
-    
-    var user: User?
     
     fileprivate func fetchPlacesWithUser() {
         
@@ -145,7 +142,7 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
         if activePlace == -1 {
             locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
             locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
         } else {
@@ -175,8 +172,6 @@ class UserPageController: UIViewController, MKMapViewDelegate {
     
     //MARK - Method for longPress
     @objc func longPress(gestureRecognizer: UIGestureRecognizer) {
-        
-        print(1233333)
      
         if gestureRecognizer.state == UIGestureRecognizer.State.began {
             let touchPoint = gestureRecognizer.location(in: self.mapView)
@@ -185,6 +180,8 @@ class UserPageController: UIViewController, MKMapViewDelegate {
         
             let lat = newCoordinate.latitude
             let lon = newCoordinate.longitude
+            
+            // We can save a short address but because it was not on requirement list I comment it.
             
 //                let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
 //            var title = ""
