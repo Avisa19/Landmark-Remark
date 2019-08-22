@@ -30,7 +30,7 @@ I do not use storyboard, I did all my project programmatically according how App
 
 8-  I use Firebase Database for my server-side aspect.
 
-9-  I add documentation markup and it will display in Quick Help.
+9-  I added documentation markup and it will display in Quick Help.
 
                *** Source code will be developed and runnable in XCode 10 ***
 
