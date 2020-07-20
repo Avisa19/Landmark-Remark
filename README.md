@@ -1,13 +1,5 @@
 # Landmark-Remark
 
-Hi, 
-
-Thank you for considering me for the software engineer (iOS) role at Tigerspike Company.
-
-The time that I spent to finish Landmark Remark project was around 10 hours.
-
-I do not use storyboard, I did all my project programmatically according how Apple Co. do the coding for creating an app with swift.
-
 *******About my project scheme:
 
 1-  Once when you launch the app, you will see sign up page , to enter your username and email and password. 
