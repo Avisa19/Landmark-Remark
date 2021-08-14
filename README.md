@@ -27,9 +27,6 @@
                *** Source code will be developed and runnable in XCode 10 ***
 
 
-Kind Regards,
-Avisa Poshtkouhi,
-iOS Engineer
 
 
 
